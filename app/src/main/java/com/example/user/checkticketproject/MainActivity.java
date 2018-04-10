@@ -16,6 +16,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
@@ -142,25 +143,25 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         private void runCode() {
-                            url ="http://10.0.2.2/QRcodeTest.php?qrcodeid=";
+                            url ="http://10.0.2.2/Checkid.php?checkid=";
                             url =  url+textCheckid.getText().toString();
-                            new Thread(new Runnable(){
-
-                                @Override
-                                public void run() {
-                                    Looper.prepare();
-                                    //TODO Auto-generated method stub
-                                    HttpClient client = new DefaultHttpClient();
-                                    HttpGet myget = new HttpGet(url);
-                                    try {
-                                        HttpResponse response = client.execute(myget);
-//                            textQRcodeRead.setText(String.valueOf(response));
-                                    } catch (Exception e) {
-
-                                        e.printStackTrace();
-                                    }
-                                    Looper.loop();
-                                }}).start();
+//                            new Thread(new Runnable(){
+//
+//                                @Override
+//                                public void run() {
+//                                    Looper.prepare();
+//                                    //TODO Auto-generated method stub
+//                                    HttpClient client = new DefaultHttpClient();
+//                                    HttpGet myget = new HttpGet(url);
+//                                    try {
+//                                        HttpResponse response = client.execute(myget);
+////                            textQRcodeRead.setText(String.valueOf(response));
+//                                    } catch (Exception e) {
+//
+//                                        e.printStackTrace();
+//                                    }
+//                                    Looper.loop();
+//                                }}).start();
 
                             new TransTask().execute(url);
                         }
@@ -171,33 +172,28 @@ public class MainActivity extends AppCompatActivity {
         CheckidButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
-                url ="http://10.0.2.2/QRcodeTest.php?qrcodeid=";
-                url =  url+textCheckid.getText().toString();
-                new Thread(new Runnable(){
+                int ticket = Integer.valueOf(textTicket.getText().toString());
+                if (ticket < 1) {
 
-                    @Override
-                    public void run() {
-                        Looper.prepare();
-                        //TODO Auto-generated method stub
-                        HttpClient client = new DefaultHttpClient();
-                        HttpGet myget = new HttpGet(url);
-                        try {
-                            HttpResponse response = client.execute(myget);
-//                            textQRcodeRead.setText(String.valueOf(response));
-                        } catch (Exception e) {
-
-                            e.printStackTrace();
-                        }
-                        Looper.loop();
-                    }}).start();
-
-                new TransTask().execute(url);
-
+                    //彈跳視窗
+                    ShowAlertDialog();
+                } else {
+                    url = "http://10.0.2.2/TicketUPDATE.php?checkid=";
+                    url = url + textCheckid.getText().toString();
+                    new TransTask().execute(url);
+                }
             }
         });
     }
 
 
+    private void ShowAlertDialog()
+    {
+        AlertDialog.Builder MyAlertDialog = new AlertDialog.Builder(this);
+        MyAlertDialog.setTitle("通知");
+        MyAlertDialog.setMessage("此購票人：" + textUsername.getText().toString() + " 持票數為 " + textTicket.getText().toString());
+        MyAlertDialog.show();
+    }
 
     //Json 解析
         class TransTask extends AsyncTask<String, Void, String> {
@@ -235,11 +231,12 @@ public class MainActivity extends AppCompatActivity {
                     int id = obj.getInt("id");
                     int age = obj.getInt("age");
                     int ticket = obj.getInt("ticket");
+                    int original = obj.getInt("original");
                     String time = obj.getString("time");
                     String username = obj.getString("username");
                     String phone = obj.getString("phone");
                     String checkid = obj.getString("checkid");
-                    Json t = new Json(id, age,ticket,username,time,phone,checkid);
+                    Json t = new Json(id, age,ticket,original,time,phone,checkid);
                     textUsername.setText(String.valueOf(username));
                     textPhone.setText(String.valueOf(phone));
                     textTicket.setText(String.valueOf(ticket));
