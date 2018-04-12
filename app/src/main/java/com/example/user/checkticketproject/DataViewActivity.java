@@ -2,19 +2,17 @@ package com.example.user.checkticketproject;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
@@ -29,7 +27,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-
+import java.util.HashMap;
 
 
 
@@ -37,7 +35,8 @@ public class DataViewActivity extends AppCompatActivity {
     Toolbar toolbar;
     DrawerLayout dataviewlayout;
     NavigationView liftmenu;
-    ListView dateviewlist;
+    ListView dataviewlist;
+    ArrayList<HashMap<String, String>> arrayList;
     int sublist;
     String url ="http://10.0.2.2/Sublist.php";
     @Override
@@ -47,7 +46,7 @@ public class DataViewActivity extends AppCompatActivity {
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         dataviewlayout = (DrawerLayout)findViewById(R.id.dataview_layout);
         liftmenu = (NavigationView)findViewById(R.id.liftmenu);
-        dateviewlist = (ListView)findViewById(R.id.dateviewlist);
+        dataviewlist = (ListView)findViewById(R.id.dataviewlist);
         new TransTask().execute(url);
         settoolbar();
         setliftmenu();
@@ -82,6 +81,12 @@ public class DataViewActivity extends AppCompatActivity {
 
         private void parseJSON(String s) {
             ArrayList<Json> trans = new ArrayList<>();
+            arrayList = new ArrayList<HashMap<String, String>>();
+            HashMap hashMap_title = new HashMap<String, String>();
+            hashMap_title.put("id", "id");
+            hashMap_title.put("username", "username");
+            hashMap_title.put("ticket", "ticket");
+            hashMap_title.put("phone", "phone");
             try {
                 JSONArray array = new JSONArray(s);
                 sublist = 0;
@@ -97,13 +102,30 @@ public class DataViewActivity extends AppCompatActivity {
                     String checkid = obj.getString("checkid");
                     Json t = new Json(id, age,ticket,original,username,time,phone,checkid);
                     sublist = sublist + original - ticket;
+                    HashMap<String, String> hashMap = new HashMap<>();
+
+
+                    hashMap.put("id", obj.getString("id"));
+                    hashMap.put("username", obj.getString("username"));
+                    hashMap.put("ticket", obj.getString("ticket"));
+                    hashMap.put("phone", obj.getString("phone"));
                     trans.add(t);
                 }
                 toolbar.setSubtitle("入場人數：" + String.valueOf(sublist));
+                SimpleAdapter simpleAdapter = new SimpleAdapter(
+                        DataViewActivity.this,
+                        arrayList,
+                        R.layout.data_list,
+                        new String[]{"id", "x", "y", "name"},
+                        new int[]{R.id.textView, R.id.textView2, R.id.textView3, R.id.textView4}
+                );
+
+
+                dataviewlist.setAdapter(simpleAdapter);
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
         }
     }
     
