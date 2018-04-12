@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CheckTicketProject</string>
+    <string name="app_name">CheckTicketProjectTest</string>
     <string name="open">Drawer Open</string>
     <string name="close">Drawer Close</string>
 </resources>

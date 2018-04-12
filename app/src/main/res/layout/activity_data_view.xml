@@ -39,14 +39,22 @@
                 android:layout_toRightOf="@+id/textphoneView"
                 android:ems="10"
                 android:inputType="date"
-                android:textSize="8pt" />
+                android:textSize="6pt" />
 
             <Button
                 android:id="@+id/serachphone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="55dip"
+                android:layout_height="40dip"
                 android:layout_toRightOf="@+id/textphone"
                 android:text="搜尋"
+                android:textSize="6pt" />
+
+            <Button
+                android:id="@+id/refresh"
+                android:layout_width="55dip"
+                android:layout_height="40dip"
+                android:layout_toRightOf="@+id/serachphone"
+                android:text="更新"
                 android:textSize="6pt" />
         </RelativeLayout>
 
@@ -54,7 +62,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/textsearchlayout"
-            android:id="@+id/dateviewlist"/>
+            android:id="@+id/dataviewlist"/>
 
     </RelativeLayout>
 
