@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-
 public class DataViewActivity extends AppCompatActivity {
     Toolbar toolbar;
     DrawerLayout dataviewlayout;
@@ -48,6 +47,7 @@ public class DataViewActivity extends AppCompatActivity {
         liftmenu = (NavigationView)findViewById(R.id.liftmenu);
         dataviewlist = (ListView)findViewById(R.id.dataviewlist);
         new TransTask().execute(url);
+        new TransTaskList().execute("http://10.0.2.2/Sublist.php");
         settoolbar();
         setliftmenu();
     }
@@ -81,12 +81,6 @@ public class DataViewActivity extends AppCompatActivity {
 
         private void parseJSON(String s) {
             ArrayList<Json> trans = new ArrayList<>();
-            arrayList = new ArrayList<HashMap<String, String>>();
-            HashMap hashMap_title = new HashMap<String, String>();
-            hashMap_title.put("id", "id");
-            hashMap_title.put("username", "username");
-            hashMap_title.put("ticket", "ticket");
-            hashMap_title.put("phone", "phone");
             try {
                 JSONArray array = new JSONArray(s);
                 sublist = 0;
@@ -102,33 +96,99 @@ public class DataViewActivity extends AppCompatActivity {
                     String checkid = obj.getString("checkid");
                     Json t = new Json(id, age,ticket,original,username,time,phone,checkid);
                     sublist = sublist + original - ticket;
-                    HashMap<String, String> hashMap = new HashMap<>();
-
-
-                    hashMap.put("id", obj.getString("id"));
-                    hashMap.put("username", obj.getString("username"));
-                    hashMap.put("ticket", obj.getString("ticket"));
-                    hashMap.put("phone", obj.getString("phone"));
                     trans.add(t);
                 }
                 toolbar.setSubtitle("入場人數：" + String.valueOf(sublist));
-                SimpleAdapter simpleAdapter = new SimpleAdapter(
-                        DataViewActivity.this,
-                        arrayList,
-                        R.layout.data_list,
-                        new String[]{"id", "x", "y", "name"},
-                        new int[]{R.id.textView, R.id.textView2, R.id.textView3, R.id.textView4}
-                );
-
-
-                dataviewlist.setAdapter(simpleAdapter);
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
     }
-    
+    //List Json
+
+    class TransTaskList extends AsyncTask<String, Void, String> {
+
+
+        private ArrayList<HashMap<String, String>> arrayList;
+        private ListView list_item;
+
+        @Override
+        protected String doInBackground(String... params) {
+            StringBuilder sb = new StringBuilder();
+
+            try {
+
+                URL url = new URL(params[0]);
+                BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+                String line = in.readLine();
+                while (line != null) {
+
+                    sb.append(line);
+                    line = in.readLine();
+                }
+            } catch (Exception e) {
+
+            }
+
+            return sb.toString();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            parseJSON(s);
+        }
+
+    }
+
+
+    private void parseJSON(String jsonStr) {
+        arrayList = new ArrayList<HashMap<String, String>>();
+        HashMap hashMap_title = new HashMap<String, String>();
+        hashMap_title.put("id", "id");
+        hashMap_title.put("username", "username");
+        hashMap_title.put("ticket", "ticket");
+        hashMap_title.put("phone", "phone");
+
+        arrayList.add(hashMap_title);
+
+        try {
+            StringBuilder sb = new StringBuilder();
+            JSONArray jsonArray = new JSONArray(jsonStr);
+            if (jsonArray != null && jsonArray.length() > 0) {
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    HashMap<String, String> hashMap = new HashMap<>();
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                    hashMap.put("id", jsonObject.getString("id"));
+                    hashMap.put("username", jsonObject.getString("username"));
+                    hashMap.put("ticket", jsonObject.getString("ticket"));
+                    hashMap.put("phone", jsonObject.getString("phone"));
+
+                    arrayList.add(hashMap);
+
+
+                }
+            }
+
+            SimpleAdapter simpleAdapter = new SimpleAdapter(
+                    this,
+                    arrayList,
+                    R.layout.data_list,
+                    new String[]{"id", "username", "ticket", "phone"},
+                    new int[]{R.id.textView, R.id.textView2, R.id.textView3, R.id.textView4}
+            );
+
+
+            dataviewlist.setAdapter(simpleAdapter);
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void settoolbar() {
         toolbar.setTitle("查詢系統");
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
