@@ -13,8 +13,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+<<<<<<< HEAD
 import android.widget.Button;
 import android.widget.EditText;
+=======
+>>>>>>> 843ebc158bed01a66ec09548d5d741deaddd86af
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
@@ -37,9 +40,12 @@ public class DataViewActivity extends AppCompatActivity {
     DrawerLayout dataviewlayout;
     NavigationView liftmenu;
     ListView dataviewlist;
+<<<<<<< HEAD
     Button serachbutton;
     Button refresh;
     EditText textphone;
+=======
+>>>>>>> 843ebc158bed01a66ec09548d5d741deaddd86af
     ArrayList<HashMap<String, String>> arrayList;
     int sublist;
     String url ="http://10.0.2.2/Sublist.php";
@@ -51,9 +57,12 @@ public class DataViewActivity extends AppCompatActivity {
         dataviewlayout = (DrawerLayout)findViewById(R.id.dataview_layout);
         liftmenu = (NavigationView)findViewById(R.id.liftmenu);
         dataviewlist = (ListView)findViewById(R.id.dataviewlist);
+<<<<<<< HEAD
         serachbutton = (Button)findViewById(R.id.serachphone);
         refresh = (Button)findViewById(R.id.refresh);
         textphone = (EditText)findViewById(R.id.textphone);
+=======
+>>>>>>> 843ebc158bed01a66ec09548d5d741deaddd86af
         new TransTask().execute(url);
         new TransTaskList().execute("http://10.0.2.2/Sublist.php");
         settoolbar();
